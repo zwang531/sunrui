@@ -32,8 +32,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'login.apps.LoginConfig',
-    'my_app.apps.MyAppConfig',
     'mysite.apps.MyAdminConfig',  # 'django.contrib.admin',
     'sunrui.apps.SunruiConfig',
     'django.contrib.auth',
