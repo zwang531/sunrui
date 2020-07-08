@@ -9,8 +9,8 @@ class MyAdminSite(AdminSite):
         ordering = {
             "Groups": 1,
             "Users": 2,
-            "项目": 3,
-            "子项目": 4,
+            "Projects": 3,
+            "Records": 4,
         }
         for app in app_list:
             app['models'].sort(key=lambda x: ordering[x['name']])

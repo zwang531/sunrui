@@ -1,0 +1,57 @@
+{% load static %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <title>Login</title>
+    <script>
+        $(document).ready(function(){
+            $('.sidenav').sidenav();
+        });
+    </script>
+</head>
+<body>
+    <nav>
+        <div class="container nav-wrapper">
+            <a href="#!" class="brand-logo">Logo</a>
+        </div>
+    </nav>
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'error'%}
+                <script>M.toast({html: "{{message}}"});</script>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    <div class="container">
+        <br/>
+        <br/>
+        <br/>
+        <form id="login-form" class="col s12" action="{% url 'login:index' %}" method="post">
+          {% csrf_token %}
+          <div class="row">
+            <div class="input-field col s10 m6 xl4 push-s1 push-m3 push-xl4">
+                <i class="material-icons prefix">account_circle</i>
+                <input id="username" name="username" type="text" class="validate" required>
+                <label for="username">用户名</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s10 m6 xl4 push-s1 push-m3 push-xl4">
+                <i class="material-icons prefix">lock</i>
+                <input id="password" name="password" type="password" class="validate" required>
+                <label for="password">密码</label>
+            </div>
+          </div>
+            <div class="center">
+                <button class="btn waves-effect waves-light btn-large" type="submit">
+                    Login
+                    <i class="material-icons right">send</i>
+                </button>
+            </div>
+        </form>
+    </div>
+</body>
