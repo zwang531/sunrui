@@ -21,7 +21,7 @@ class Project(models.Model):
 
 
 class Record(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, related_name='record_list', on_delete=models.CASCADE)
     user_id = models.CharField(max_length=200)
     user_nickname = models.CharField(max_length=200)
     amount = models.FloatField(default=0)

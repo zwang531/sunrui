@@ -3,7 +3,9 @@ import zlib
 import json
 import base64
 import time
+import xlwt
 from sunrui.Structure import Project, Record
+
 
 def AddSalt(ori:bytearray):
     #从网页JS当中提取到的混淆盐值，每隔一位做一次异或运算
@@ -70,25 +72,100 @@ def GetDetail(pro_id:int):
         float(Response['datas']['donation']),
         int(Response['datas']['sellstats'])
     )
+#
+# def GetPurchaseList(pro_id:int):
+#     #获得所有人购买的数据，以list形式返回
+#     Data='{{"ismore":false,"limit":15,"id":"{0}","offset":0,"requestTime":{1},"pf":"h5"}}'.format(pro_id,int(time.time()*1000))
+#     Response=SendRequest('https://www.tao-ba.club/idols/join',Data)
+#     Founderlist = []
+#     Cleared = False
+#     pages=0
+#     while not Cleared:
+#         for thisRecord in Response['list']:
+#             Founderlist.append(Record(pro_id,
+#                 int(thisRecord['userid']),
+#                 thisRecord['nick'],
+#                 float(thisRecord['money']),
+#             ))
+#         if len(Response['list']) == 15:
+#             pages += 1
+#             Data='{{"ismore":true,"limit":15,"id":"{0}","offset":{2},"requestTime":{1},"pf":"h5"}}'.format(pro_id,int(time.time()*1000),pages*15)
+#             Response=SendRequest('https://www.tao-ba.club/idols/join',Data)
+#         else:
+#             Cleared = True
+#     return Founderlist
 
-def GetPurchaseList(pro_id:int):
-    #获得所有人购买的数据，以list形式返回
-    Data='{{"ismore":false,"limit":15,"id":"{0}","offset":0,"requestTime":{1},"pf":"h5"}}'.format(pro_id,int(time.time()*1000))
-    Response=SendRequest('https://www.tao-ba.club/idols/join',Data)
+def GetRecords(pro_id):
+    # 获得项目基本信息
+    Data = '{{"id":"{0}","requestTime":{1},"pf":"h5"}}'.format(pro_id, int(time.time() * 1000))
+    Response = SendRequest('https://www.tao-ba.club/idols/detail', Data)
+
+    return GetPurchaseList(pro_id, (int(Response['datas']['start'])), int(Response['datas']['expire']))
+
+
+def GetPurchaseList(pro_id, startTime, endTime):
+    # 获得所有人购买的数据，以list形式返回
+    Data = '{{"ismore":false,"limit":15,"id":"{0}","offset":0,"requestTime":{1},"pf":"h5"}}'.format(pro_id, int(
+        time.time() * 1000))
+    Response = SendRequest('https://www.tao-ba.club/idols/join', Data)
     Founderlist = []
     Cleared = False
-    pages=0
+    pages = 0
+    amountTotal = 0
     while not Cleared:
         for thisRecord in Response['list']:
-            Founderlist.append(Record(pro_id,
-                int(thisRecord['userid']),
-                thisRecord['nick'],
-                float(thisRecord['money']),
-            ))
+            Founderlist.append(thisRecord)
+            amountTotal += float(thisRecord['money'])
+        while not Cleared:
+            for thisRecord in Response['list']:
+                Founderlist.append(thisRecord)
+                amountTotal += float(thisRecord['money'])
+                if(float(thisRecord['money'])>1000):
+                    distribution['大于1000'] = distribution['大于1000']+1
+                elif(float(thisRecord['money'])>501):
+                    distribution['501-1000'] = distribution['501-1000']+1
+                elif(float(thisRecord['money'])>101):
+                    distribution['101-500'] = distribution['101-500']+1
+                elif(float(thisRecord['money'])>51):
+                    distribution['51-101'] = distribution['51-101']+1
+                elif(float(thisRecord['money'])>11):
+                    distribution['11-50'] = distribution['11-50']+1
+                else:
+                    distribution['lessThan10'] = distribution['lessThan10']+1
+
         if len(Response['list']) == 15:
             pages += 1
-            Data='{{"ismore":true,"limit":15,"id":"{0}","offset":{2},"requestTime":{1},"pf":"h5"}}'.format(pro_id,int(time.time()*1000),pages*15)
-            Response=SendRequest('https://www.tao-ba.club/idols/join',Data)
+            Data = '{{"ismore":true,"limit":15,"id":"{0}","offset":{2},"requestTime":{1},"pf":"h5"}}'.format(pro_id,
+                                                                                                             int(
+                                                                                                                 time.time() * 1000),
+                                                                                                             pages * 15)
+            Response = SendRequest('https://www.tao-ba.club/idols/join', Data)
         else:
             Cleared = True
-    return Founderlist
+
+    return getPhaseTotal(Founderlist, startTime, endTime, 600)
+
+
+def getPhaseTotal(Founderlist, startTime, endTime, interval):
+    phaseRecord = []
+    total = 0
+    timestamp = startTime
+
+    flag = 0
+    startTime = startTime + flag * interval
+
+    for idx, item in enumerate(reversed(Founderlist)):
+        total += float(item['money'])
+
+        if (item['stime'] > startTime):
+            record = {"timestamp": startTime, "total": str(('%0.2f' % total))}
+            phaseRecord.append(record)
+
+            flag += 1
+            startTime = startTime + interval
+
+        if (startTime > endTime + 10 and idx == len(Founderlist) - 1):
+            record = {"timestamp": endTime, "total": str(('%0.2f' % total))}
+            phaseRecord.append(record)
+
+    return phaseRecord
