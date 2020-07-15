@@ -20,7 +20,7 @@ def AddSalt(ori:bytearray):
 
 def EncodeData(ori:str):
     #开头的数字是原始报文长度
-    Length = len(ori)
+    Length = len(ori)+1000
     Message = str.encode(ori)
     #首先用zlib进行压缩
     Compressed = bytearray(zlib.compress(Message))
@@ -116,22 +116,6 @@ def GetPurchaseList(pro_id, startTime, endTime):
         for thisRecord in Response['list']:
             Founderlist.append(thisRecord)
             amountTotal += float(thisRecord['money'])
-        while not Cleared:
-            for thisRecord in Response['list']:
-                Founderlist.append(thisRecord)
-                amountTotal += float(thisRecord['money'])
-                if(float(thisRecord['money'])>1000):
-                    distribution['大于1000'] = distribution['大于1000']+1
-                elif(float(thisRecord['money'])>501):
-                    distribution['501-1000'] = distribution['501-1000']+1
-                elif(float(thisRecord['money'])>101):
-                    distribution['101-500'] = distribution['101-500']+1
-                elif(float(thisRecord['money'])>51):
-                    distribution['51-101'] = distribution['51-101']+1
-                elif(float(thisRecord['money'])>11):
-                    distribution['11-50'] = distribution['11-50']+1
-                else:
-                    distribution['lessThan10'] = distribution['lessThan10']+1
 
         if len(Response['list']) == 15:
             pages += 1
@@ -169,3 +153,31 @@ def getPhaseTotal(Founderlist, startTime, endTime, interval):
             phaseRecord.append(record)
 
     return phaseRecord
+
+def GetAllProjects(query:str):
+    #获得艺人所有经费项目
+    Cleared = False
+    pages = 0
+
+    Data='{{"ismore":false,"offset":{2},"limit":20,"query":"{0}","isSearch":true,"requestTime":{1},"_version_":1,"pf":"h5"}}'.format(query,int(time.time()*1000), pages*20)
+    Response=SendRequest('https://www.tao-ba.club/idols/index', Data)
+
+    Responses = []
+    for resp in Response['list']:
+        Responses.append(resp)
+
+    while not Cleared:
+        # for thisRecord in Response['list']:
+            # print('id:', thisRecord['id'], 'title:', thisRecord['title'])
+
+        # print('=========== Page:', pages+1, '============')
+        if len(Response['list']) == 20:
+            pages += 1
+            Data='{{"ismore":false,"offset":{2},"limit":20,"query":"{0}","isSearch":true,"requestTime":{1},"_version_":1,"pf":"h5"}}'.format(query,int(time.time()*1000), pages*20)
+            Response=SendRequest('https://www.tao-ba.club/idols/index', Data)
+            for resp in Response['list']:
+                Responses.append(resp)
+        else:
+            Cleared = True
+
+    return Responses

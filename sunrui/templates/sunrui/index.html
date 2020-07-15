@@ -12,22 +12,34 @@
     <em>{{current_time}}</em>
     <br/><br/>
     <div class="row">
-        <div class="col s6">项目ID : {{project.pro_id}}</div>
-        <div class="col s6">项目ID : {{project2.pro_id}}</div>
-        <div class="col s6">项目名称 : {{project.title}}</div>
-        <div class="col s6">项目名称 : {{project2.title}}</div>
-        <div class="col s6">开始时间 : {{starttime}}</div>
-        <div class="col s6">开始时间 : {{starttime2}}</div>
-        <div class="col s6">结束时间 : {{endtime}}</div>
-        <div class="col s6">结束时间 : {{endtime2}}</div>
-        <div class="col s6">当前金额 : {{project.current}}</div>
-        <div class="col s6">当前金额 : {{project2.current}}</div>
-        <div class="col s6">销售件数 : {{project.support_num}}</div>
-        <div class="col s6">销售件数 : {{project2.support_num}}</div>
+        <div class="col s4">项目ID : {{project.pro_id}}</div>
+        <div class="col s4">项目ID : {{project2.pro_id}}</div>
+        <div class="col s4">项目ID : {{project3.pro_id}}</div>
+
+        <div class="col s4">项目名称 : {{project.title}}</div>
+        <div class="col s4">项目名称 : {{project2.title}}</div>
+        <div class="col s4">项目名称 : {{project3.title}}</div>
+
+        <div class="col s4">开始时间 : {{starttime}}</div>
+        <div class="col s4">开始时间 : {{starttime2}}</div>
+        <div class="col s4">开始时间 : {{starttime3}}</div>
+
+        <div class="col s4">结束时间 : {{endtime}}</div>
+        <div class="col s4">结束时间 : {{endtime2}}</div>
+        <div class="col s4">结束时间 : {{endtime3}}</div>
+
+        <div class="col s4">当前金额 : {{project.current}}</div>
+        <div class="col s4">当前金额 : {{project2.current}}</div>
+        <div class="col s4">当前金额 : {{project3.current}}</div>
+
+        <div class="col s4">销售件数 : {{project.support_num}}</div>
+        <div class="col s4">销售件数 : {{project2.support_num}}</div>
+        <div class="col s4">销售件数 : {{project3.support_num}}</div>
     </div>
     <br/><br/>
     {{myechart_line|safe}}
     <br/><br/>
+    {{myechart_pie_12|safe}}
     {{myechart_pie|safe}}
     {{myechart_pie_6|safe}}
     <br/><br/>

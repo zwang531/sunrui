@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rice Ranking</title>
+</head>
+<body>
+    <h1>🍚 Ranking</h1>
+    <h3>jz总额：<span id="sum"></span></h3>
+    <form action="#" method="post" class="demoForm" id="demoForm">
+    <table class="striped highlight">
+        <thead>
+            <tr>
+                <th>项目名称</th>
+                <th>创建人</th>
+                <th>当前金额</th>
+                <th>开始日期</th>
+                <th>结束日期</th>
+                <th>状态</th>
+                <th>链接</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for project in project_list %}
+            <tr>
+                <td><input type="checkbox" name="projects[]" value="{{project.current_amount}}" />
+                    <span>{{ project.project_title }}</span></td>
+                <td>{{ project.project_nickname }}</td>
+                <td>{{ project.current_amount }}</td>
+                <td>{{ project.start_str }}</td>
+                <td>{{ project.end_str }}</td>
+                <td>{% if project.is_expire %}已结束{% else %}进行中{% endif %}</td>
+                <td><a href="https://www.taoba.club/#/pages/idols/detail?id={{project.project_id}}">tb</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </form>
+    <script>
+        var sum = 0
+        var projects = document.forms['demoForm'].elements[ 'projects[]' ];
+        for (var i=0, len=projects.length; i<len; i++) {
+            projects[i].onclick = calculateSum;
+        }
+        function calculateSum() {
+            if ( this.checked ) {
+                // if checked ...
+                sum += parseFloat(this.value)
+            } else {
+                // if not checked ...
+                sum -= parseFloat(this.value)
+            }
+            document.getElementById("sum").innerHTML = sum.toFixed(2);
+        }
+    </script>
+</body>
+</html>
