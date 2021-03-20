@@ -12,7 +12,7 @@ psycopg2==2.8.5
 pytz==2020.1
 sqlparse==0.3.1
 whitenoise==5.1.0
-Jinja2==2.11.2
+Jinja2==2.11.3
 MarkupSafe==1.1.1
 prettytable==0.7.2
 pyecharts==1.8.1
